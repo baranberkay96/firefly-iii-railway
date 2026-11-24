@@ -1,5 +1,7 @@
 # Deploy and Host Firefly III with Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/firefly-iii-67-personal-finance-postgres?referralCode=20H68q)
+
 Firefly III is a free, open-source personal finance manager: accounts, budgets, categories, bills, piggy banks, rules and reports, built on double-entry bookkeeping. This template runs it on Railway with Postgres, Redis, a daily cron job and an owner account that is created for you before the app goes online.
 
 ## About Hosting Firefly III
