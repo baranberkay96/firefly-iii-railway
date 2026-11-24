@@ -233,7 +233,7 @@
    "source": {
     "image": "alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf"
    },
-   "startCommand": "/bin/sh -c 'echo \"railway-cron: running Firefly III jobs\"; wget -q -T 900 -O /tmp/out \"$FIREFLY_URL/api/v1/cron/$STATIC_CRON_TOKEN\"; rc=$?; head -c 3000 /tmp/out; echo; echo \"railway-cron: finished with exit code $rc\"; exit $rc'",
+   "startCommand": "/bin/sh -c 'echo \"railway-cron: running Firefly III jobs\"; wget -q -T 900 -O /tmp/out \"$FIREFLY_URL/api/v1/cron/$STATIC_CRON_TOKEN\"; rc=$?; cat /tmp/out; echo; echo \"railway-cron: finished with exit code $rc\"; exit $rc'",
    "preDeployCommand": null,
    "healthcheckPath": null,
    "healthcheckTimeout": null,

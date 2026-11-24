@@ -29,10 +29,10 @@ Required input: `FIREFLY_OWNER_EMAIL`. Generated: `FIREFLY_OWNER_PASSWORD` (24),
 
 | Service | Idle RAM | Typical | CPU |
 |---|---|---|---|
-| Firefly III | see report | 0.2–0.5 GB | low |
+| Firefly III | 0.25 GB measured | 0.3–0.6 GB (imports, reports) | low |
 | Cron | 0 (runs ~seconds/day) | — | — |
-| Postgres | ≈0.05–0.1 GB | 0.1–0.3 GB | low |
-| Redis | ≈0.01 GB | — | low |
+| Postgres | 0.10 GB measured | 0.1–0.3 GB | low |
+| Redis | 0.04 GB measured | — | low |
 
 Estimated cost ≈ $4–8/month + volumes. Minimum plan: Hobby (several services); each service fits Trial's 1 GB.
 
@@ -47,3 +47,5 @@ Estimated cost ≈ $4–8/month + volumes. Minimum plan: Hobby (several services
 ## Open questions
 
 - Data Importer not included (optional upstream; needs its own auth if public).
+- Firefly III's cron design puts `STATIC_CRON_TOKEN` in the URL, so nginx's access log on the Firefly III service shows it (Railway logs are visible to project members only). Rotate it by changing the variable if logs are shared.
+- Personal access tokens: Firefly III creates its personal-access client when the owner first opens Profile > OAuth (upstream behaviour).
