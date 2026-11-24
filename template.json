@@ -1,0 +1,396 @@
+{
+ "name": "Firefly III 6.7 (Personal Finance, Postgres, Redis, Cron)",
+ "idSeed": "Firefly III 6.7 (Personal Finance, Postgres, Redis, Cron) / 2026-11-24",
+ "description": "Self-hosted personal finance manager with budgets, rules and daily cron.",
+ "category": "Other",
+ "tags": [
+  "firefly-iii",
+  "personal-finance",
+  "budgeting",
+  "double-entry",
+  "money-management",
+  "postgres",
+  "self-hosted"
+ ],
+ "image": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/firefly-iii.svg",
+ "upstream": {
+  "repo": "firefly-iii/firefly-iii",
+  "version": "6.7.9",
+  "license": "AGPL-3.0-or-later",
+  "images": {
+   "firefly": "fireflyiii/core:version-6.7.9@sha256:10bbe21fbdc68b8fa955d85827aeed197ab46d62c8c745e949d322b9f4b73ff5 (pushed 2026-11-24)",
+   "cron": "alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf",
+   "postgres": "ghcr.io/railwayapp-templates/postgres-ssl:18.6@sha256:4fc833b43d2aaf6ecc9b18615f5533602b723a32d0e2efe2dae8ca0f7217c863",
+   "redis": "redis:8.2.11@sha256:b0b01167ff47bc3868e56a967895a26be4230891a1f42a78ab61cdd227accc8d"
+  },
+  "checked": "2026-11-24"
+ },
+ "services": {
+  "Firefly III": {
+   "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/firefly-iii.svg",
+   "source": {
+    "repo": "baranberkay96/firefly-iii-railway",
+    "rootDirectory": "/services/firefly"
+   },
+   "startCommand": null,
+   "preDeployCommand": null,
+   "healthcheckPath": "/health",
+   "healthcheckTimeout": 900,
+   "restartPolicyType": "ALWAYS",
+   "numReplicas": 1,
+   "cronSchedule": null,
+   "publicDomain": true,
+   "targetPort": 8080,
+   "tcpProxy": null,
+   "volume": {
+    "mountPath": "/var/www/html/storage"
+   },
+   "variables": {
+    "FIREFLY_OWNER_EMAIL": {
+     "defaultValue": "",
+     "description": "Email you log in with; the owner account is created with it on the first start.",
+     "required": true
+    },
+    "FIREFLY_OWNER_PASSWORD": {
+     "defaultValue": "${{secret(24, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Owner password (16-128 chars), applied at every start: change it here, not in the app.",
+     "required": false
+    },
+    "SITE_OWNER": {
+     "defaultValue": "${{FIREFLY_OWNER_EMAIL}}",
+     "description": "Address that receives Firefly III's admin notifications.",
+     "required": false
+    },
+    "APP_KEY": {
+     "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Encryption key, exactly 32 characters. Never change it after the first start.",
+     "required": false
+    },
+    "STATIC_CRON_TOKEN": {
+     "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "32-character token the Cron service uses to call /api/v1/cron.",
+     "required": false
+    },
+    "APP_URL": {
+     "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+     "description": "Public URL of Firefly III. Change it when you add a custom domain.",
+     "required": false
+    },
+    "APP_ENV": {
+     "defaultValue": "production",
+     "description": "Laravel environment.",
+     "required": false
+    },
+    "APP_DEBUG": {
+     "defaultValue": "false",
+     "description": "Never enable on a public server.",
+     "required": false
+    },
+    "TRUSTED_PROXIES": {
+     "defaultValue": "**",
+     "description": "Trust Railway's edge proxy for HTTPS and client IPs.",
+     "required": false
+    },
+    "TZ": {
+     "defaultValue": "UTC",
+     "description": "Time zone (for example Europe/Berlin).",
+     "required": false
+    },
+    "DEFAULT_LANGUAGE": {
+     "defaultValue": "en_US",
+     "description": "Default interface language.",
+     "required": false
+    },
+    "DEFAULT_LOCALE": {
+     "defaultValue": "equal",
+     "description": "Number/date locale; 'equal' follows the language.",
+     "required": false
+    },
+    "DB_CONNECTION": {
+     "defaultValue": "pgsql",
+     "description": "Database driver.",
+     "required": false
+    },
+    "DB_HOST": {
+     "defaultValue": "${{Postgres.PGHOST}}",
+     "description": "Postgres host (private network).",
+     "required": false
+    },
+    "DB_PORT": {
+     "defaultValue": "${{Postgres.PGPORT}}",
+     "description": "Postgres port.",
+     "required": false
+    },
+    "DB_DATABASE": {
+     "defaultValue": "${{Postgres.PGDATABASE}}",
+     "description": "Postgres database.",
+     "required": false
+    },
+    "DB_USERNAME": {
+     "defaultValue": "${{Postgres.PGUSER}}",
+     "description": "Postgres user.",
+     "required": false
+    },
+    "DB_PASSWORD": {
+     "defaultValue": "${{Postgres.PGPASSWORD}}",
+     "description": "Postgres password.",
+     "required": false
+    },
+    "PGSQL_SSL_MODE": {
+     "defaultValue": "prefer",
+     "description": "TLS mode for Postgres on the private network.",
+     "required": false
+    },
+    "CACHE_STORE": {
+     "defaultValue": "redis",
+     "description": "Cache backend.",
+     "required": false
+    },
+    "SESSION_DRIVER": {
+     "defaultValue": "redis",
+     "description": "Session backend (sessions survive redeploys).",
+     "required": false
+    },
+    "REDIS_HOST": {
+     "defaultValue": "${{Redis.REDISHOST}}",
+     "description": "Redis host (private network).",
+     "required": false
+    },
+    "REDIS_PORT": {
+     "defaultValue": "${{Redis.REDISPORT}}",
+     "description": "Redis port.",
+     "required": false
+    },
+    "REDIS_USERNAME": {
+     "defaultValue": "${{Redis.REDISUSER}}",
+     "description": "Redis user.",
+     "required": false
+    },
+    "REDIS_PASSWORD": {
+     "defaultValue": "${{Redis.REDIS_PASSWORD}}",
+     "description": "Redis password.",
+     "required": false
+    },
+    "REDIS_DB": {
+     "defaultValue": "0",
+     "description": "Redis database for sessions.",
+     "required": false
+    },
+    "REDIS_CACHE_DB": {
+     "defaultValue": "1",
+     "description": "Redis database for the cache.",
+     "required": false
+    },
+    "COOKIE_SECURE": {
+     "defaultValue": "true",
+     "description": "Send cookies over HTTPS only.",
+     "required": false
+    },
+    "COOKIE_SAMESITE": {
+     "defaultValue": "lax",
+     "description": "SameSite cookie policy.",
+     "required": false
+    },
+    "LOG_CHANNEL": {
+     "defaultValue": "stdout",
+     "description": "Logs go to Railway's log view instead of files on the volume.",
+     "required": false
+    },
+    "APP_LOG_LEVEL": {
+     "defaultValue": "notice",
+     "description": "Log level.",
+     "required": false
+    },
+    "MAIL_MAILER": {
+     "defaultValue": "log",
+     "description": "Mail transport: log, or an HTTP API (mailgun, mailersend, mandrill, sparkpost); smtp needs Railway Pro.",
+     "required": false
+    },
+    "MAIL_FROM": {
+     "defaultValue": "${{FIREFLY_OWNER_EMAIL}}",
+     "description": "Sender address for Firefly III mails.",
+     "required": false
+    },
+    "DKR_CHECK_SQLITE": {
+     "defaultValue": "false",
+     "description": "Skip the image's SQLite check (this template uses Postgres).",
+     "required": false
+    },
+    "PHP_MEMORY_LIMIT": {
+     "defaultValue": "512M",
+     "description": "PHP memory limit (large imports and reports need more than the default).",
+     "required": false
+    },
+    "PORT": {
+     "defaultValue": "8080",
+     "description": "Port nginx listens on; the public domain points here.",
+     "required": false
+    }
+   }
+  },
+  "Cron": {
+   "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/firefly-iii.svg",
+   "source": {
+    "image": "alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf"
+   },
+   "startCommand": "/bin/sh -c 'echo \"railway-cron: running Firefly III jobs\"; wget -q -T 900 -O /tmp/out \"$FIREFLY_URL/api/v1/cron/$STATIC_CRON_TOKEN\"; rc=$?; head -c 3000 /tmp/out; echo; echo \"railway-cron: finished with exit code $rc\"; exit $rc'",
+   "preDeployCommand": null,
+   "healthcheckPath": null,
+   "healthcheckTimeout": null,
+   "restartPolicyType": "NEVER",
+   "numReplicas": 1,
+   "cronSchedule": "0 3 * * *",
+   "publicDomain": false,
+   "targetPort": null,
+   "tcpProxy": null,
+   "volume": null,
+   "variables": {
+    "FIREFLY_URL": {
+     "defaultValue": "http://${{Firefly III.RAILWAY_PRIVATE_DOMAIN}}:8080",
+     "description": "Firefly III on the private network.",
+     "required": false
+    },
+    "STATIC_CRON_TOKEN": {
+     "defaultValue": "${{Firefly III.STATIC_CRON_TOKEN}}",
+     "description": "Cron token of the Firefly III service.",
+     "required": false
+    }
+   }
+  },
+  "Postgres": {
+   "icon": "https://devicons.railway.app/i/postgresql.svg",
+   "source": {
+    "image": "ghcr.io/railwayapp-templates/postgres-ssl:18.6@sha256:4fc833b43d2aaf6ecc9b18615f5533602b723a32d0e2efe2dae8ca0f7217c863"
+   },
+   "startCommand": null,
+   "preDeployCommand": null,
+   "healthcheckPath": null,
+   "healthcheckTimeout": null,
+   "restartPolicyType": "ON_FAILURE",
+   "restartPolicyMaxRetries": 10,
+   "numReplicas": 1,
+   "cronSchedule": null,
+   "publicDomain": false,
+   "targetPort": null,
+   "tcpProxy": null,
+   "volume": {
+    "mountPath": "/var/lib/postgresql/data"
+   },
+   "variables": {
+    "PGDATA": {
+     "defaultValue": "/var/lib/postgresql/data/pgdata",
+     "description": "Location where the database will be initialized",
+     "required": false
+    },
+    "PGHOST": {
+     "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}",
+     "description": "Railway Private Domain Name.",
+     "required": false
+    },
+    "PGPORT": {
+     "defaultValue": "5432",
+     "description": "Port to connect to Postgres.",
+     "required": false
+    },
+    "PGUSER": {
+     "defaultValue": "${{ POSTGRES_USER }}",
+     "description": "Required variable for Data panel",
+     "required": false
+    },
+    "PGDATABASE": {
+     "defaultValue": "${{POSTGRES_DB}}",
+     "description": "Required variable for the data panel.",
+     "required": false
+    },
+    "PGPASSWORD": {
+     "defaultValue": "${{POSTGRES_PASSWORD}}",
+     "description": "Required variable for Data panel",
+     "required": false
+    },
+    "POSTGRES_DB": {
+     "defaultValue": "railway",
+     "description": "Default database created when image is started.",
+     "required": false
+    },
+    "DATABASE_URL": {
+     "defaultValue": "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/${{PGDATABASE}}",
+     "description": "Private connection URL (Firefly III uses the PG* variables).",
+     "required": false
+    },
+    "POSTGRES_USER": {
+     "defaultValue": "postgres",
+     "description": "User to connect to Postgres DB",
+     "required": false
+    },
+    "SSL_CERT_DAYS": {
+     "defaultValue": "820",
+     "description": "SSL certificate expiry in days.",
+     "required": false
+    },
+    "POSTGRES_PASSWORD": {
+     "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\") }}",
+     "description": "Password to connect to DB",
+     "required": false
+    },
+    "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+     "defaultValue": "60",
+     "description": "Allow Postgres to cleanly shut down",
+     "required": false
+    }
+   }
+  },
+  "Redis": {
+   "icon": "https://cdn.sanity.io/images/sy1jschh/production/0ce0bfdcfbdbf69662b1116671f97c2dd788b655-157x157.svg",
+   "source": {
+    "image": "redis:8.2.11@sha256:b0b01167ff47bc3868e56a967895a26be4230891a1f42a78ab61cdd227accc8d"
+   },
+   "startCommand": "/bin/sh -c \"rm -rf $RAILWAY_VOLUME_MOUNT_PATH/lost+found/ && exec docker-entrypoint.sh redis-server --requirepass $REDIS_PASSWORD --save 60 1 --dir $RAILWAY_VOLUME_MOUNT_PATH\"",
+   "preDeployCommand": null,
+   "healthcheckPath": null,
+   "healthcheckTimeout": null,
+   "restartPolicyType": "ON_FAILURE",
+   "restartPolicyMaxRetries": 10,
+   "numReplicas": 1,
+   "cronSchedule": null,
+   "publicDomain": false,
+   "targetPort": null,
+   "tcpProxy": null,
+   "volume": {
+    "mountPath": "/data"
+   },
+   "variables": {
+    "REDISHOST": {
+     "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}",
+     "description": "Private network hostname of the Redis service.",
+     "required": false
+    },
+    "REDISPORT": {
+     "defaultValue": "6379",
+     "description": "Port that Redis listens on.",
+     "required": false
+    },
+    "REDISUSER": {
+     "defaultValue": "default",
+     "description": "Username for authenticating with Redis.",
+     "required": false
+    },
+    "REDIS_PASSWORD": {
+     "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\") }}",
+     "description": "Randomly generated password for authenticating with Redis.",
+     "required": false
+    },
+    "REDISPASSWORD": {
+     "defaultValue": "${{REDIS_PASSWORD}}",
+     "description": "Alias of REDIS_PASSWORD.",
+     "required": false
+    },
+    "REDIS_URL": {
+     "defaultValue": "redis://${{ REDISUSER }}:${{ REDIS_PASSWORD }}@${{ REDISHOST }}:${{ REDISPORT }}",
+     "description": "Private connection URL (Firefly III uses the REDIS* variables).",
+     "required": false
+    }
+   }
+  }
+ },
+ "buckets": []
+}
