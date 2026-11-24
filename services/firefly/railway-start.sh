@@ -67,8 +67,11 @@ fi
 # Hand the password to firefly-owner.php through a private file (it deletes
 # it), so it does not stay in the environment of nginx and PHP-FPM.
 PASSWORD_FILE=/tmp/railway-owner-password
-install -m 0600 -o www-data -g www-data /dev/null "$PASSWORD_FILE"
-printf '%s' "$password" > "$PASSWORD_FILE"
+# Write first, then chown: /tmp is sticky and fs.protected_regular stops root
+# from opening an existing file there that belongs to www-data.
+rm -f "$PASSWORD_FILE"
+(umask 077 && printf '%s' "$password" > "$PASSWORD_FILE")
+chown www-data:www-data "$PASSWORD_FILE"
 export RAILWAY_OWNER_PASSWORD_FILE=$PASSWORD_FILE
 unset FIREFLY_OWNER_PASSWORD password
 
